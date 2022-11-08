@@ -1,0 +1,68 @@
+﻿<Window x:Class="Projekt5.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Projekt5"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+
+    <Grid>
+        <TabControl>
+            <TabItem Header="Punkt 1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width ="2*"></ColumnDefinition>
+                        <ColumnDefinition Width ="9*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <Button x:Name="LoadImageButton" Click="LoadImageButtonClicked">Load</Button>
+                        <Label>Operacja</Label>
+                        <RadioButton x:Name="Expand" GroupName="Choice" IsChecked="True">rozszerzenie histogramu</RadioButton>
+                        <RadioButton x:Name="Equalize" GroupName="Choice">wyrównanie histogramu</RadioButton>
+
+                        <Label></Label>
+                        <Button x:Name="TranformButton" Click="TranformButtonClick">Przekształć</Button>
+                    </StackPanel>
+
+
+                    <Image x:Name="MyImage" Grid.Column="1"></Image>
+                </Grid>
+
+
+            </TabItem>
+            <TabItem Header="Punkt 2">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width ="2*"></ColumnDefinition>
+                        <ColumnDefinition Width ="9*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <Button x:Name="LoadImageButton2" Click="LoadImageButtonClicked">Load</Button>
+                        <Label>Operacja</Label>
+                        <RadioButton x:Name="SmoothingButton" GroupName="Choice" IsChecked="True">Filtr wygładzający</RadioButton>
+                        <RadioButton x:Name="MedianButton" GroupName="Choice">Filtr medianowy</RadioButton>
+                        <RadioButton x:Name="SobelButton" GroupName="Choice">Filtr wykrywania krawędzi</RadioButton>
+                        <RadioButton x:Name="HighPassButton" GroupName="Choice">Filtr górnoprzepustowy wyostrzający</RadioButton>
+                        <RadioButton x:Name="GaussButton" GroupName="Choice">Filtr rozmycie gaussowskie</RadioButton>
+                        <RadioButton x:Name="Mask" GroupName="Choice">Splot maski dowolnego rozmiaru i dowolnych wartości elementów maski,</RadioButton>
+
+                        <Label></Label>
+                        <Button x:Name="TranformButton2" Click="TranformButtonClick">Przekształć</Button>
+                    </StackPanel>
+
+
+                    <Image x:Name="MyImage2" Grid.Column="1"></Image>
+                </Grid>
+
+            </TabItem>
+        </TabControl>
+
+
+    </Grid>
+</Window>
+
