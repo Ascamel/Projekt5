@@ -42,17 +42,15 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <Button x:Name="LoadImageButton2" Click="LoadImageButtonClicked">Load</Button>
+                        <Button x:Name="LoadImageButton2" Click="LoadImageButtonClicked2">Load</Button>
                         <Label>Operacja</Label>
-                        <RadioButton x:Name="SmoothingButton" GroupName="Choice" IsChecked="True">Filtr wygładzający</RadioButton>
-                        <RadioButton x:Name="MedianButton" GroupName="Choice">Filtr medianowy</RadioButton>
-                        <RadioButton x:Name="SobelButton" GroupName="Choice">Filtr wykrywania krawędzi</RadioButton>
-                        <RadioButton x:Name="HighPassButton" GroupName="Choice">Filtr górnoprzepustowy wyostrzający</RadioButton>
-                        <RadioButton x:Name="GaussButton" GroupName="Choice">Filtr rozmycie gaussowskie</RadioButton>
-                        <RadioButton x:Name="Mask" GroupName="Choice">Splot maski dowolnego rozmiaru i dowolnych wartości elementów maski,</RadioButton>
+                        <RadioButton x:Name="HandButton" GroupName="Choice" IsChecked="True">Ręczne</RadioButton>
+                        <RadioButton x:Name="PercentBlack" GroupName="Choice">Percent Black </RadioButton>
+                        <RadioButton x:Name="MedianButton2" GroupName="Choice">Filtr medianowy</RadioButton>
 
                         <Label></Label>
-                        <Button x:Name="TranformButton2" Click="TranformButtonClick">Przekształć</Button>
+                        <TextBox x:Name="HandText"></TextBox>
+                        <Button x:Name="TranformButton2" Click="TranformButtonClick2">Przekształć</Button>
                     </StackPanel>
 
 

@@ -257,5 +257,117 @@ namespace Projekt5
             return null;
         }
 
+        private void TranformButtonClick2(object sender, RoutedEventArgs e)
+        {
+
+            if (HandButton.IsChecked.GetValueOrDefault())
+            {
+                int threshold = Convert.ToInt32(HandText.Text);
+                int average = 0;
+
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
+                        int r = Convert.ToInt16(pixel.R),
+                            g = Convert.ToInt16(pixel.G),
+                            b = Convert.ToInt16(pixel.B);
+
+                        average = (r+g+b)/3;
+
+                        if (average > threshold)
+                        {
+                            pixel = Color.White;
+                            picture.SetPixel(i, j, pixel);
+                        }
+                        else
+                        {
+                            pixel = Color.Black;
+                            picture.SetPixel(i, j, pixel);
+                        }
+                    }
+                }
+            }
+            else if (PercentBlack.IsChecked.GetValueOrDefault())
+            {
+                List<MyValue> LUT = new();
+
+                MyValue myValue;
+
+                int percentage = Convert.ToInt32(HandText.Text);
+                int average = 0;
+
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
+                        int r = Convert.ToInt16(pixel.R),
+                            g = Convert.ToInt16(pixel.G),
+                            b = Convert.ToInt16(pixel.B);
+
+                        average = (r+g+b)/3;
+
+                        myValue = new(i, j, average);
+                        LUT.Add(myValue);
+                    }
+                }
+
+                List<MyValue> SortedList = LUT.OrderBy(o => o.value).ToList();
+                int tmp = 0;
+
+                for (int i = 0; i<percentage*SortedList.Count*0.01;i++)
+                {
+                    picture.SetPixel(SortedList[i].i, SortedList[i].j, Color.Black);
+                    tmp++;
+                }
+
+                for(int i = tmp ;i < SortedList.Count; i++)
+                {
+                    picture.SetPixel(SortedList[i].i, SortedList[i].j, Color.White);
+                }
+            }
+
+            MemoryStream memoryStream = new();
+            picture.Save(memoryStream, ImageFormat.Png);
+            BitmapImage bitmapImage = new();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+
+            MyImage2.Source = bitmapImage;
+        }
+
+        private void LoadImageButtonClicked2(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Select a picture";
+            op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" +
+              "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
+              "Portable Network Graphic (*.png)|*.png";
+            if (op.ShowDialog() == true)
+            {
+                imgPath = op.FileName;
+                MyImage2.Source = new BitmapImage(new Uri(imgPath));
+
+                picture = new(imgPath);
+            }
+        }
+    }
+
+    class MyValue
+    {
+        public int i { get; set; }
+        public int j { get; set; }
+        public int value { get; set; }
+
+        public MyValue(int i, int j, int value)
+        {
+            this.i=i;
+            this.j=j;
+            this.value=value;
+        }
     }
 }
