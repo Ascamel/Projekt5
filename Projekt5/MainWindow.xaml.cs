@@ -20,6 +20,7 @@ using System.Windows.Shapes;
 using Color = System.Drawing.Color;
 using System.IO;
 using System.Collections;
+using System.Threading;
 
 namespace Projekt5
 {
@@ -363,11 +364,20 @@ namespace Projekt5
 
                 while(TW != TB)
                 {
-                    threshold = (TW + TB) / 2;
-                    TW = ThresholdWhite(SortedList, threshold);
+                    if (((TW + TB) / 2) != threshold)
+                    {
+                        threshold = (TW + TB) / 2;
+                    }
+                    else if (TW > TB)
+                    {
+                        threshold -= 20;
+                    }
+                    else
+                        threshold += 3;
+                        
                     TB = ThresholdBlack(SortedList, threshold);
+                    TW = ThresholdWhite(SortedList, threshold);
                 }
-
             }
 
             MemoryStream memoryStream = new();
@@ -387,7 +397,9 @@ namespace Projekt5
             int sum = 0;
             int iter = 0;
 
-            for(int i = 0; i < threshold * myValues.Count * 0.01; i++)
+            int tmp = myValues.FindIndex(o => o.value == threshold);
+
+            for(int i = 0; i < tmp; i++)
             {
                 sum+= myValues[i].value;
                 iter++;
@@ -404,7 +416,10 @@ namespace Projekt5
             int sum = 0;
             int iter = 0;
 
-            for (int i = threshold; i < myValues.Count; i++)
+            int tmp = myValues.FindIndex(o => o.value == threshold);
+
+
+            for (int i = tmp; i < myValues.Count; i++)
             {
                 sum += myValues[i].value;
                 iter++;
