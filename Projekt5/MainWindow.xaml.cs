@@ -359,24 +359,48 @@ namespace Projekt5
 
                 List<MyValue> SortedList = LUT.OrderBy(o => o.value).ToList();
 
+                int TB = ThresholdBlack(SortedList, threshold);
                 int TW = ThresholdWhite(SortedList,threshold);
-                int TB = ThresholdBlack(SortedList,threshold);
 
-                while(TW != TB)
+                while(true)
                 {
                     if (((TW + TB) / 2) != threshold)
                     {
                         threshold = (TW + TB) / 2;
                     }
-                    else if (TW > TB)
+                    else                    
                     {
-                        threshold -= 20;
+                        break;
                     }
-                    else
-                        threshold += 3;
                         
                     TB = ThresholdBlack(SortedList, threshold);
                     TW = ThresholdWhite(SortedList, threshold);
+                }
+
+                HandText.Text = threshold.ToString();
+
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
+                        int r = Convert.ToInt16(pixel.R),
+                            g = Convert.ToInt16(pixel.G),
+                            b = Convert.ToInt16(pixel.B);
+
+                        average = (r+g+b)/3;
+
+                        if (average > threshold)
+                        {
+                            pixel = Color.White;
+                            picture.SetPixel(i, j, pixel);
+                        }
+                        else
+                        {
+                            pixel = Color.Black;
+                            picture.SetPixel(i, j, pixel);
+                        }
+                    }
                 }
             }
 
@@ -417,7 +441,6 @@ namespace Projekt5
             int iter = 0;
 
             int tmp = myValues.FindIndex(o => o.value == threshold);
-
 
             for (int i = tmp; i < myValues.Count; i++)
             {
