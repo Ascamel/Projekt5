@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Color = System.Drawing.Color;
 using System.IO;
+using System.Collections;
 
 namespace Projekt5
 {
@@ -328,6 +329,46 @@ namespace Projekt5
                     picture.SetPixel(SortedList[i].i, SortedList[i].j, Color.White);
                 }
             }
+            else if(IterationButton.IsChecked.GetValueOrDefault())
+            {
+                List<MyValue> LUT = new();
+
+                MyValue myValue;
+
+                int threshold = 127;
+
+
+                int average = 0;
+
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
+                        int r = Convert.ToInt16(pixel.R),
+                            g = Convert.ToInt16(pixel.G),
+                            b = Convert.ToInt16(pixel.B);
+
+                        average = (r + g + b) / 3;
+
+                        myValue = new(i, j, average);
+                        LUT.Add(myValue);
+                    }
+                }
+
+                List<MyValue> SortedList = LUT.OrderBy(o => o.value).ToList();
+
+                int TW = ThresholdWhite(SortedList,threshold);
+                int TB = ThresholdBlack(SortedList,threshold);
+
+                while(TW != TB)
+                {
+                    threshold = (TW + TB) / 2;
+                    TW = ThresholdWhite(SortedList, threshold);
+                    TB = ThresholdBlack(SortedList, threshold);
+                }
+
+            }
 
             MemoryStream memoryStream = new();
             picture.Save(memoryStream, ImageFormat.Png);
@@ -338,6 +379,40 @@ namespace Projekt5
             bitmapImage.EndInit();
 
             MyImage2.Source = bitmapImage;
+        }
+
+        public int ThresholdBlack(List<MyValue> myValues,int threshold)
+        {
+            int newthreshold = 0;
+            int sum = 0;
+            int iter = 0;
+
+            for(int i = 0; i < threshold * myValues.Count * 0.01; i++)
+            {
+                sum+= myValues[i].value;
+                iter++;
+            }
+
+            newthreshold = sum / iter;
+
+            return newthreshold;
+        }
+
+        public int ThresholdWhite(List<MyValue> myValues, int threshold)
+        {
+            int newthreshold = 0;
+            int sum = 0;
+            int iter = 0;
+
+            for (int i = threshold; i < myValues.Count; i++)
+            {
+                sum += myValues[i].value;
+                iter++;
+            }
+
+            newthreshold = sum / iter;
+
+            return newthreshold;
         }
 
         private void LoadImageButtonClicked2(object sender, RoutedEventArgs e)
@@ -357,7 +432,7 @@ namespace Projekt5
         }
     }
 
-    class MyValue
+    public class MyValue
     {
         public int i { get; set; }
         public int j { get; set; }

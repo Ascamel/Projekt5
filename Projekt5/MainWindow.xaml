@@ -46,7 +46,7 @@
                         <Label>Operacja</Label>
                         <RadioButton x:Name="HandButton" GroupName="Choice" IsChecked="True">Ręczne</RadioButton>
                         <RadioButton x:Name="PercentBlack" GroupName="Choice">Percent Black </RadioButton>
-                        <RadioButton x:Name="MedianButton2" GroupName="Choice">Filtr medianowy</RadioButton>
+                        <RadioButton x:Name="IterationButton" GroupName="Choice">Selekcja iteratywna średniej</RadioButton>
 
                         <Label></Label>
                         <TextBox x:Name="HandText"></TextBox>
