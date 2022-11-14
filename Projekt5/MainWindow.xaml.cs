@@ -51,20 +51,6 @@ namespace Projekt5
 
                 picture = new(imgPath);               
             }
-/*
-            red = new int[256];
-            green = new int[256];
-            blue = new int[256];
-            for (int x = 0; x < picture.Width; x++)
-            {
-                for (int y = 0; y < picture.Height; y++)
-                {
-                    Color pixel = picture.GetPixel(x, y);
-                    red[pixel.R]++;
-                    green[pixel.G]++;
-                    blue[pixel.B]++;
-                }
-            }*/
 
         }
 
@@ -79,6 +65,29 @@ namespace Projekt5
             {
                 LUT[i] = (255 / (max - min)) * (i - min);
             }
+            return LUT;
+        }
+
+        public int[] CalculateLUT2(int[] pixels, int size)
+        {
+            int[] LUT = new int[256];
+            float[] DISTRIBUTION = new float[256];
+            int min = Array.FindIndex(pixels, x => x > 0);
+
+            float sum = 0.0F;
+
+            for(int i = 0; i < 256; i++)
+            {
+                DISTRIBUTION[i] = (pixels[i]+sum)/size;
+                sum += pixels[i];
+            }
+
+            for(int i = 0; i < 256; i++)
+            {
+                LUT[i] = (int)(((DISTRIBUTION[i] - DISTRIBUTION[min]) / 1 - DISTRIBUTION[min]) * 255);
+            }
+
+
             return LUT;
         }
 
@@ -144,94 +153,60 @@ namespace Projekt5
             } 
             else if (Equalize.IsChecked.GetValueOrDefault())
             {
-                /*  int size = picture.Width * picture.Height;
-                  int[] red = new int[256];
-                  int[] green = new int[256];
-                  int[] blue = new int[256];
-                  double[] rdense = new double[256];
-                  double[] gdense = new double[256];
-                  double[] bdense = new double[256];
-                  for (int i = 0; i < picture.Width; ++i)
-                      for (int j = 0; j < picture.Height; ++j)
-                      {
-                          System.Drawing.Color pixel = picture.GetPixel(i, j);
-                          red[Convert.ToInt16(pixel.R)] += 1;
-                          green[Convert.ToInt16(pixel.G)] += 1;
-                          blue[Convert.ToInt16(pixel.B)] += 1;
-                      }
-                  for (int i = 0; i < 256; i++)
-                  {
-                      rdense[i] = (red[i] * 1.0) / size;
-                      gdense[i] = (green[i] * 1.0) / size;
-                      bdense[i] = (blue[i] * 1.0) / size;
-                  }
+                int[] LUTR = new int[256];
+                int[] LUTG = new int[256];
+                int[] LUTB = new int[256];
 
-                  for (int i = 1; i < 256; i++)
-                  {
-                      rdense[i] += rdense[i - 1];
-                      gdense[i] += gdense[i - 1];
-                      bdense[i] += bdense[i - 1];
-                  }
+                int[] RValues = new int[256];
+                int[] GValues = new int[256];
+                int[] BValues = new int[256];
 
-                  for (int i = 0; i < picture.Width; ++i)
-                      for (int j = 0; j < picture.Height; ++j)
-                      {
-                          System.Drawing.Color pixel = picture.GetPixel(i, j);
-                          int rr = Convert.ToInt16(pixel.R),
-                              gg = Convert.ToInt16(pixel.G),
-                              bb = Convert.ToInt16(pixel.B);
-                          int r,
-                              g,
-                              b;
-                          if (rr == 0)
-                          {
-                              r = 0;
-                          }
-                          else
-                          {
-                              r = Convert.ToInt16(
-                                  rdense[Convert.ToInt16(pixel.R)] * Convert.ToInt16(pixel.R)
-                              );
-                          }
-                          if (gg == 0)
-                          {
-                              g = 0;
-                          }
-                          else
-                          {
-                              g = Convert.ToInt16(
-                                  rdense[Convert.ToInt16(pixel.G)] * Convert.ToInt16(pixel.G)
-                              );
-                          }
-                          if (bb == 0)
-                          {
-                              b = 0;
-                          }
-                          else
-                          {
-                              b = Convert.ToInt16(
-                                  rdense[Convert.ToInt16(pixel.B)] * Convert.ToInt16(pixel.B)
-                              );
-                          }
 
-                          pixel = System.Drawing.Color.FromArgb(r, g, b);
-                          picture.SetPixel(i, j, pixel);
-                      }
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
 
-                  MemoryStream memoryStream = new();
-                  picture.Save(memoryStream, ImageFormat.Png);
-                  BitmapImage bitmapImage = new();
-                  bitmapImage.BeginInit();
-                  bitmapImage.StreamSource = memoryStream;
-                  bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                  bitmapImage.EndInit();
+                        RValues[pixel.R]++;
+                        GValues[pixel.G]++;
+                        BValues[pixel.B]++;
+                    }
+                }
 
-                  MyImage.Source = bitmapImage;
-              }
-              if (red == null)
-              {
-                  return;
-              }*/
+                int picturesize = picture.Width * picture.Height;
+
+                LUTR = CalculateLUT2(RValues, picturesize);
+                LUTG = CalculateLUT2(GValues, picturesize);
+                LUTB = CalculateLUT2(BValues, picturesize);
+
+                for (int i = 0; i < picture.Width; ++i)
+                {
+                    for (int j = 0; j < picture.Height; ++j)
+                    {
+                        System.Drawing.Color pixel = picture.GetPixel(i, j);
+
+                        int r = LUTR[pixel.R];
+                        int g = LUTG[pixel.G];
+                        int b = LUTB[pixel.B];
+
+                        System.Drawing.Color newpixel = Color.FromArgb(r, g, b);
+
+
+                        picture.SetPixel(i, j, newpixel);
+                    }
+                }
+
+
+                MemoryStream memoryStream = new();
+                picture.Save(memoryStream, ImageFormat.Png);
+                BitmapImage bitmapImage = new();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memoryStream;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+
+                MyImage.Source = bitmapImage;
             }
         }
 
